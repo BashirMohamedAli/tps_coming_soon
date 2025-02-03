@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Image from "next/image"
-import { ChevronDown } from "lucide-react"
-import styled, { createGlobalStyle, keyframes } from "styled-components"
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import styled, { createGlobalStyle, keyframes } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -18,18 +17,12 @@ const GlobalStyle = createGlobalStyle`
       font-size: 14px;
     }
   }
-`
+`;
 
 const float = keyframes`
   0%, 100% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-20px) scale(1.05); }
-`
-
-const bounce = keyframes`
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-10px); }
-  60% { transform: translateY(-5px); }
-`
+`;
 
 const Container = styled.div`
   position: relative;
@@ -39,15 +32,21 @@ const Container = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-`
+`;
 
 const Bubbles = styled.div`
   position: absolute;
   inset: 0;
   pointer-events: none;
-`
+`;
 
-const Bubble = styled.div<{ size: string; top: string; left?: string; right?: string; duration: string }>`
+const Bubble = styled.div<{
+  size: string;
+  top: string;
+  left?: string;
+  right?: string;
+  duration: string;
+}>`
   position: absolute;
   width: ${(props) => props.size};
   height: ${(props) => props.size};
@@ -55,13 +54,17 @@ const Bubble = styled.div<{ size: string; top: string; left?: string; right?: st
   left: ${(props) => props.left};
   right: ${(props) => props.right};
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(251,187,48,0.1) 0%, rgba(251,187,48,0.05) 100%);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(251, 187, 48, 0.1) 0%,
+    rgba(251, 187, 48, 0.05) 100%
+  );
   animation: ${float} ${(props) => props.duration} infinite;
 
   @media (max-width: 768px) {
     transform: scale(0.7);
   }
-`
+`;
 
 const WaveBg = styled.div`
   position: absolute;
@@ -69,13 +72,17 @@ const WaveBg = styled.div`
   left: 0;
   right: 0;
   height: 16rem;
-  background: linear-gradient(180deg, rgba(1,1,1,0) 0%, rgba(251,187,48,0.15) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(1, 1, 1, 0) 0%,
+    rgba(251, 187, 48, 0.15) 100%
+  );
   clip-path: polygon(0 25%, 100% 0, 100% 100%, 0% 100%);
 
   @media (max-width: 768px) {
     height: 10rem;
   }
-`
+`;
 
 const Header = styled.header`
   position: relative;
@@ -88,7 +95,7 @@ const Header = styled.header`
   @media (max-width: 768px) {
     padding: 1rem;
   }
-`
+`;
 
 const Logo = styled(Image)`
   width: 150px;
@@ -97,22 +104,7 @@ const Logo = styled(Image)`
   @media (max-width: 768px) {
     width: 100px;
   }
-`
-
-const DetailsButton = styled.button`
-  font-size: 0.875rem;
-  font-weight: 300;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  opacity: 1;
-  transition: opacity 0.3s;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`
+`;
 
 const Main = styled.main`
   position: relative;
@@ -124,7 +116,7 @@ const Main = styled.main`
   flex-grow: 1;
   padding: 2rem;
   text-align: center;
-`
+`;
 
 const Subtitle = styled.h2`
   font-size: 1.125rem;
@@ -134,7 +126,7 @@ const Subtitle = styled.h2`
   @media (min-width: 768px) {
     font-size: 1.25rem;
   }
-`
+`;
 
 const Title = styled.h1`
   font-size: 2.5rem;
@@ -144,7 +136,7 @@ const Title = styled.h1`
   @media (min-width: 768px) {
     font-size: 3.75rem;
   }
-`
+`;
 
 const Countdown = styled.div`
   display: flex;
@@ -161,17 +153,17 @@ const Countdown = styled.div`
     font-size: 2rem;
     gap: 0.5rem;
   }
-`
+`;
 
 const TimeUnit = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
 
 const TimeValue = styled.span`
   font-variant-numeric: tabular-nums;
-`
+`;
 
 const TimeLabel = styled.span`
   font-size: 0.75rem;
@@ -181,44 +173,12 @@ const TimeLabel = styled.span`
   @media (max-width: 480px) {
     font-size: 0.6rem;
   }
-`
+`;
 
 const Separator = styled.span`
   color: #fbbb30;
   align-self: flex-start;
-`
-
-const ScrollButton = styled.button`
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 300;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.3s;
-
-  &:hover {
-    opacity: 1;
-  }
-
-  @media (max-width: 768px) {
-    bottom: 1rem;
-  }
-`
-
-const ScrollIcon = styled(ChevronDown)`
-  color: #fbbb30;
-  animation: ${bounce} 2s infinite;
-`
+`;
 
 export default function ComingSoon() {
   const [timeLeft, setTimeLeft] = useState({
@@ -226,38 +186,39 @@ export default function ComingSoon() {
     hours: "00",
     minutes: "00",
     seconds: "00",
-  })
+  });
 
   useEffect(() => {
-    const targetDate = new Date()
-    targetDate.setDate(targetDate.getDate() + 10) // Set to 10 days from now
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10); // Set to 10 days from now
 
     const interval = setInterval(() => {
-      const now = new Date().getTime()
-      const distance = targetDate.getTime() - now
+      const now = new Date().getTime();
+      const distance = targetDate.getTime() - now;
 
       if (distance < 0) {
-        clearInterval(interval)
-        return
+        clearInterval(interval);
+        return;
       }
 
-      const days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, "0")
-      const hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, "0")
-      const minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0")
-      const seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, "0")
+      const days = String(
+        Math.floor(distance / (1000 * 60 * 60 * 24))
+      ).padStart(2, "0");
+      const hours = String(
+        Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      ).padStart(2, "0");
+      const minutes = String(
+        Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+      ).padStart(2, "0");
+      const seconds = String(
+        Math.floor((distance % (1000 * 60)) / 1000)
+      ).padStart(2, "0");
 
-      setTimeLeft({ days, hours, minutes, seconds })
-    }, 1000)
+      setTimeLeft({ days, hours, minutes, seconds });
+    }, 1000);
 
-    return () => clearInterval(interval)
-  }, [])
-
-  const scrollDown = () => {
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: "smooth",
-    })
-  }
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -302,10 +263,8 @@ export default function ComingSoon() {
               <TimeLabel>Secs</TimeLabel>
             </TimeUnit>
           </Countdown>
-          
         </Main>
       </Container>
     </>
-  )
+  );
 }
-
