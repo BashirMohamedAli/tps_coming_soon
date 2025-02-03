@@ -2,26 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.wave-bg {
+  background: linear-gradient(180deg, rgba(1, 1, 1, 0) 0%, rgba(251, 187, 48, 0.15) 100%);
+  clip-path: polygon(0 25%, 100% 0, 100% 100%, 0% 100%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.bubble-1 {
+  @apply absolute w-32 h-32 rounded-full;
+  background: radial-gradient(circle at 30% 30%, rgba(251, 187, 48, 0.1) 0%, rgba(251, 187, 48, 0.05) 100%);
+  top: 15%;
+  left: 15%;
+  animation: float 8s infinite;
+}
+
+.bubble-2 {
+  @apply absolute w-24 h-24 rounded-full;
+  background: radial-gradient(circle at 30% 30%, rgba(251, 187, 48, 0.1) 0%, rgba(251, 187, 48, 0.05) 100%);
+  top: 25%;
+  left: 25%;
+  animation: float 6s infinite;
+}
+
+.bubble-3 {
+  @apply absolute w-40 h-40 rounded-full;
+  background: radial-gradient(circle at 30% 30%, rgba(251, 187, 48, 0.1) 0%, rgba(251, 187, 48, 0.05) 100%);
+  top: 10%;
+  right: 20%;
+  animation: float 10s infinite;
+}
+
+.bubble-4 {
+  @apply absolute w-28 h-28 rounded-full;
+  background: radial-gradient(circle at 30% 30%, rgba(251, 187, 48, 0.1) 0%, rgba(251, 187, 48, 0.05) 100%);
+  top: 30%;
+  right: 25%;
+  animation: float 7s infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}

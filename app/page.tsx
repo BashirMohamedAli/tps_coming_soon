@@ -1,101 +1,311 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useEffect, useState } from "react"
+import Image from "next/image"
+import { ChevronDown } from "lucide-react"
+import styled, { createGlobalStyle, keyframes } from "styled-components"
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      font-size: 14px;
+    }
+  }
+`
+
+const float = keyframes`
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+`
+
+const bounce = keyframes`
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+`
+
+const Container = styled.div`
+  position: relative;
+  min-height: 100vh;
+  background-color: #010101;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+`
+
+const Bubbles = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+`
+
+const Bubble = styled.div<{ size: string; top: string; left?: string; right?: string; duration: string }>`
+  position: absolute;
+  width: ${(props) => props.size};
+  height: ${(props) => props.size};
+  top: ${(props) => props.top};
+  left: ${(props) => props.left};
+  right: ${(props) => props.right};
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(251,187,48,0.1) 0%, rgba(251,187,48,0.05) 100%);
+  animation: ${float} ${(props) => props.duration} infinite;
+
+  @media (max-width: 768px) {
+    transform: scale(0.7);
+  }
+`
+
+const WaveBg = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 16rem;
+  background: linear-gradient(180deg, rgba(1,1,1,0) 0%, rgba(251,187,48,0.15) 100%);
+  clip-path: polygon(0 25%, 100% 0, 100% 100%, 0% 100%);
+
+  @media (max-width: 768px) {
+    height: 10rem;
+  }
+`
+
+const Header = styled.header`
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`
+
+const Logo = styled(Image)`
+  width: 150px;
+  height: auto;
+
+  @media (max-width: 768px) {
+    width: 100px;
+  }
+`
+
+const DetailsButton = styled.button`
+  font-size: 0.875rem;
+  font-weight: 300;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.3s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`
+
+const Main = styled.main`
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  padding: 2rem;
+  text-align: center;
+`
+
+const Subtitle = styled.h2`
+  font-size: 1.125rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+  }
+`
+
+const Title = styled.h1`
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 3rem;
+
+  @media (min-width: 768px) {
+    font-size: 3.75rem;
+  }
+`
+
+const Countdown = styled.div`
+  display: flex;
+  gap: 1rem;
+  font-size: 2.5rem;
+  font-weight: 300;
+
+  @media (min-width: 768px) {
+    font-size: 3.75rem;
+    gap: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    gap: 0.5rem;
+  }
+`
+
+const TimeUnit = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+const TimeValue = styled.span`
+  font-variant-numeric: tabular-nums;
+`
+
+const TimeLabel = styled.span`
+  font-size: 0.75rem;
+  color: #a0a0a0;
+  margin-top: 0.5rem;
+
+  @media (max-width: 480px) {
+    font-size: 0.6rem;
+  }
+`
+
+const Separator = styled.span`
+  color: #fbbb30;
+  align-self: flex-start;
+`
+
+const ScrollButton = styled.button`
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 300;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    bottom: 1rem;
+  }
+`
+
+const ScrollIcon = styled(ChevronDown)`
+  color: #fbbb30;
+  animation: ${bounce} 2s infinite;
+`
+
+export default function ComingSoon() {
+  const [timeLeft, setTimeLeft] = useState({
+    days: "00",
+    hours: "00",
+    minutes: "00",
+    seconds: "00",
+  })
+
+  useEffect(() => {
+    const targetDate = new Date()
+    targetDate.setDate(targetDate.getDate() + 10) // Set to 10 days from now
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime()
+      const distance = targetDate.getTime() - now
+
+      if (distance < 0) {
+        clearInterval(interval)
+        return
+      }
+
+      const days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, "0")
+      const hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, "0")
+      const minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0")
+      const seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, "0")
+
+      setTimeLeft({ days, hours, minutes, seconds })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const scrollDown = () => {
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: "smooth",
+    })
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+    <>
+      <GlobalStyle />
+      <Container>
+        <Bubbles>
+          <Bubble size="8rem" top="15%" left="15%" duration="8s" />
+          <Bubble size="6rem" top="25%" left="25%" duration="6s" />
+          <Bubble size="10rem" top="10%" right="20%" duration="10s" />
+          <Bubble size="7rem" top="30%" right="25%" duration="7s" />
+        </Bubbles>
+        <WaveBg />
+        <Header>
+          <Logo
+            src="/logo.jpeg"
+            alt="The Project Stories"
+            width={150}
+            height={40}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+        </Header>
+        <Main>
+          <Subtitle>Something great is on the way</Subtitle>
+          <Title>COMING SOON</Title>
+          <Countdown>
+            <TimeUnit>
+              <TimeValue>{timeLeft.days}</TimeValue>
+              <TimeLabel>Days</TimeLabel>
+            </TimeUnit>
+            <Separator>:</Separator>
+            <TimeUnit>
+              <TimeValue>{timeLeft.hours}</TimeValue>
+              <TimeLabel>Hours</TimeLabel>
+            </TimeUnit>
+            <Separator>:</Separator>
+            <TimeUnit>
+              <TimeValue>{timeLeft.minutes}</TimeValue>
+              <TimeLabel>Mins</TimeLabel>
+            </TimeUnit>
+            <Separator>:</Separator>
+            <TimeUnit>
+              <TimeValue>{timeLeft.seconds}</TimeValue>
+              <TimeLabel>Secs</TimeLabel>
+            </TimeUnit>
+          </Countdown>
+          
+        </Main>
+      </Container>
+    </>
+  )
 }
+
