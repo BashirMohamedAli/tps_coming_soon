@@ -183,35 +183,35 @@ const Separator = styled.span`
 
 interface ComingSoonProps {
   targetDate: string
-  initialTimeLeft: {
-    days: string
-    hours: string
-    minutes: string
-    seconds: string
-    total: number
-  }
 }
 
-export default function ComingSoon({ targetDate, initialTimeLeft }: ComingSoonProps) {
-  const [timeLeft, setTimeLeft] = useState(initialTimeLeft)
-  const [isReady, setIsReady] = useState(initialTimeLeft.total <= 0)
+export default function ComingSoon({ targetDate }: ComingSoonProps) {
+  const [timeLeft, setTimeLeft] = useState({
+    days: "00",
+    hours: "00",
+    minutes: "00",
+    seconds: "00",
+    total: 0,
+  })
+  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
-    if (isReady) return
-
     const target = new Date(targetDate)
-    const interval = setInterval(() => {
+
+    const updateCountdown = () => {
       const remaining = getRemainingTime(target)
       setTimeLeft(remaining)
 
       if (remaining.total <= 0) {
-        clearInterval(interval)
         setIsReady(true)
       }
-    }, 1000)
+    }
+
+    updateCountdown() // Initial update
+    const interval = setInterval(updateCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [targetDate, isReady])
+  }, [targetDate])
 
   return (
     <>
